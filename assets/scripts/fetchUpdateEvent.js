@@ -19,9 +19,9 @@ export async function fetchUpdateEvent(e, id, updatedEvent) {
             } else {
                 console.error("Erreur lors de la mise à jour de l'événement.");
             }
-            // Masquer le formulaire
-            let updateForm = document.querySelector('.modalUpdate');
-            updateForm.classList.remove('active');
+            // // Masquer le formulaire
+            // let updateForm = document.querySelector('.modalUpdate');
+            // updateForm.classList.remove('active');
         })
         .catch((error) => {
             console.error("Erreur lors de la requête PATCH (fetchUpdateEvent) :", error);

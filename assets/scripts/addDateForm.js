@@ -145,8 +145,6 @@ export function addDateForm(id, dates) {
             data = [...data, datesToAddMap[i]];
         }
 
-        // console.log('data : ', data);
-        // console.log('id : ', id);
         fetchAddDate(id, data);
 
         // // Masquer le formulaire

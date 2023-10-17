@@ -346,6 +346,11 @@ body .app .add-event button:hover {
   color: rgb(72, 72, 72);
   size: 12px;
 }
+#event-form .message-create-event {
+  font-size: 0.8rem;
+  padding-left: 20px;
+  color: rgb(169, 6, 38);
+}
 #event-form #submitBtn {
   border: 0;
   padding: 5px;
@@ -384,15 +389,14 @@ body .app .add-event button:hover {
   position: relative;
   border-radius: 5px;
 }
-.modal .close {
+.modal .modal-content .closeCross {
   position: absolute;
   top: 0;
   right: 0;
   padding: 10px;
   cursor: pointer;
-}
-.modal .close img {
-  width: 10px;
+  width: 37px;
+  height: 37px;
 }
 .modal h2 {
   text-align: center;
@@ -406,6 +410,7 @@ body .app .add-event button:hover {
   gap: 10px;
 }
 .attendancesForm .userNameContainer .userNameInput {
+  height: -moz-fit-content;
   height: fit-content;
 }
 .attendancesForm .userNameContainer .sendAttendancesButton {
