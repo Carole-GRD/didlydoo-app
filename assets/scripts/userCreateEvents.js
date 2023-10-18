@@ -21,6 +21,7 @@ eventNameInput.placeholder = "Event name";
 eventNameInput.type = "text";
 eventNameInput.id = "event-name";
 eventNameInput.maxLength = 256;
+eventNameInput.setAttribute('required', 'true');
 
 form.appendChild(eventNameLabel); // label est enfant du form
 form.appendChild(eventNameInput); // input est enfant de form
@@ -32,6 +33,7 @@ const eventDatesInput = document.createElement("input");
 eventDatesInput.placeholder = "(YYYY-MM-DD)";
 eventDatesInput.type = "date";
 eventDatesInput.id = "event-dates";
+eventDatesInput.setAttribute('required', 'true');
 
 form.appendChild(eventDatesLabel);
 form.appendChild(eventDatesInput);
@@ -44,6 +46,7 @@ eventAuthorInput.placeholder = "Author";
 eventAuthorInput.type = "text";
 eventAuthorInput.id = "event-author";
 eventAuthorInput.maxLength = 256;
+eventAuthorInput.setAttribute('required', 'true');
 
 form.appendChild(eventAuthorLabel);
 form.appendChild(eventAuthorInput);
@@ -54,6 +57,7 @@ const eventDescriptionTextarea = document.createElement("textarea");
 eventDescriptionTextarea.placeholder = "Event description";
 eventDescriptionTextarea.id = "event-description";
 eventDescriptionTextarea.maxLength = 256;
+eventDescriptionTextarea.setAttribute('required', 'true');
 
 form.appendChild(eventDescriptionLabel);
 form.appendChild(eventDescriptionTextarea);
@@ -102,12 +106,17 @@ closeBtn.addEventListener("click", function () {
 
 
 
-// Récupére la date du jour pour vérifier si la date de l'évènement à entrer n'est pas déjà passée
+// Récupére la date du jour pour vérifier si la date de l'évènement à enregistrer n'est pas déjà passée
 let today = new Date();
 let todayFormatted = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
 // Récupère la date de l'input
 let dateInput = document.querySelector("#event-dates");
-let isDateOk = false;
+/*
+  Crée une variable boléenne qui permettra :
+    - si elle est "false", d'afficher un message si la date est déjà passée
+    - si elle est "true", de lancer la requête
+*/
+  let isDateOk = false;
 if (dateInput) {
   // écoute si la valeur de la date change
   dateInput.addEventListener('change', function() {
@@ -137,8 +146,6 @@ if (dateInput) {
     }
   })
 }
-
-
 
 // -------------------------------------
 
