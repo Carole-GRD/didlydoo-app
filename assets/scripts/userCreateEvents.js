@@ -21,6 +21,7 @@ eventNameInput.placeholder = "Event name";
 eventNameInput.type = "text";
 eventNameInput.id = "event-name";
 eventNameInput.maxLength = 256;
+eventNameInput.setAttribute('required', 'true');
 
 form.appendChild(eventNameLabel); // label est enfant du form
 form.appendChild(eventNameInput); // input est enfant de form
@@ -32,6 +33,7 @@ const eventDatesInput = document.createElement("input");
 eventDatesInput.placeholder = "(YYYY-MM-DD)";
 eventDatesInput.type = "date";
 eventDatesInput.id = "event-dates";
+eventDatesInput.setAttribute('required', 'true');
 
 form.appendChild(eventDatesLabel);
 form.appendChild(eventDatesInput);
@@ -44,6 +46,7 @@ eventAuthorInput.placeholder = "Author";
 eventAuthorInput.type = "text";
 eventAuthorInput.id = "event-author";
 eventAuthorInput.maxLength = 256;
+eventAuthorInput.setAttribute('required', 'true');
 
 form.appendChild(eventAuthorLabel);
 form.appendChild(eventAuthorInput);
@@ -54,6 +57,7 @@ const eventDescriptionTextarea = document.createElement("textarea");
 eventDescriptionTextarea.placeholder = "Event description";
 eventDescriptionTextarea.id = "event-description";
 eventDescriptionTextarea.maxLength = 256;
+eventDescriptionTextarea.setAttribute('required', 'true');
 
 form.appendChild(eventDescriptionLabel);
 form.appendChild(eventDescriptionTextarea);
@@ -83,7 +87,65 @@ closeBtn.addEventListener("click", function () {
   modal.style.display = "none";
   const modalContent = document.querySelector(".modal-content");
   modalContent.appendChild(form);
+
+  // Réinitialise les inputs
+  let name = document.getElementById("event-name");
+  let dates = document.getElementById("event-dates");
+  let author = document.getElementById("event-author");
+  let description = document.getElementById("event-description");
+  if (name.value || dates.value || author.value || description.value) {
+    name.value = '';
+    dates.value = '';
+    author.value = '';
+    description.value = '';
+  }
 });
+
+
+
+
+
+
+// Récupére la date du jour pour vérifier si la date de l'évènement à enregistrer n'est pas déjà passée
+let today = new Date();
+let todayFormatted = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+// Récupère la date de l'input
+let dateInput = document.querySelector("#event-dates");
+/*
+  Crée une variable boléenne qui permettra :
+    - si elle est "false", d'afficher un message si la date est déjà passée
+    - si elle est "true", de lancer la requête
+*/
+  let isDateOk = false;
+if (dateInput) {
+  // écoute si la valeur de la date change
+  dateInput.addEventListener('change', function() {
+    let isDateInFutur = (dateInput.value > todayFormatted) ? true : false;
+    // console.log('isDateInFutur : ', isDateInFutur);
+    if (!isDateInFutur) {
+      
+      let previousMessage = document.querySelector('#event-form p');
+      if (previousMessage) {
+        previousMessage.remove();
+      }
+      let eventForm = document.querySelector('#event-form');
+      let authorInput = document.querySelector('#event-author');
+      let message = document.createElement('p');
+      message.classList.add('message-create-event');
+      message.textContent = 'Date passée !'
+      eventForm.insertBefore(message, authorInput);
+      isDateOk = false;
+    }
+    else  {
+      let previousMessage = document.querySelector('#event-form p');
+      if (previousMessage) {
+        previousMessage.remove();
+      }
+      // console.log('date OK');
+      isDateOk = true;
+    }
+  })
+}
 
 // -------------------------------------
 
@@ -94,35 +156,39 @@ createEventForm.addEventListener("submit", function (event) {
   event.preventDefault(); // on veut pas que l'user envoie un formulaire vide
 
   // on recup les valeurs  du formulaire
-  const eventName = document.getElementById("event-name").value;
-  const eventDates = document.getElementById("event-dates").value.split(","); //on separe les dates avec des virgules
-  const eventAuthor = document.getElementById("event-author").value;
-  const eventDescription = document.getElementById("event-description").value;
+  let eventName = document.getElementById("event-name").value;
+  // const eventDates = document.getElementById("event-dates").value.split(","); //on separe les dates avec des virgules
+  let eventDates = document.getElementById("event-dates").value;
+  let eventAuthor = document.getElementById("event-author").value;
+  let eventDescription = document.getElementById("event-description").value;
+  
+  if (isDateOk) {
+    // on cree un objet avec les données du formulaire (pour l'envoyer dans l'API)
+    const eventData = {
+      name: eventName,
+      dates: [eventDates],
+      author: eventAuthor,
+      description: eventDescription,
+    };
+    console.log('eventData : ', eventData);
 
-  // on cree un objet avec les données du formulaire (pour l'envoyer dans l'API)
-  const eventData = {
-    name: eventName,
-    dates: eventDates,
-    author: eventAuthor,
-    description: eventDescription,
-  };
-
-  // fetch puis POST pour envoyer l'objet dans l'API
-  fetch("http://localhost:3000/api/events", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(eventData),
-  })
-    .then((response) => {
-      if (response.ok) {
-        console.log("Événement créé avec succès.");
-      } else {
-        console.error("Erreur lors de la création de l'événement.");
-      }
+    // fetch puis POST pour envoyer l'objet dans l'API
+    fetch("http://localhost:3000/api/events", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(eventData),
     })
-    .catch((error) => {
-      console.error("Erreur lors de la requête POST :", error);
-    });
+      .then((response) => {
+        if (response.ok) {
+          console.log("Événement créé avec succès.");
+        } else {
+          console.error("Erreur lors de la création de l'événement.");
+        }
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la requête POST :", error);
+      });
+  }
 });
